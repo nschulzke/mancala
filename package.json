@@ -1,0 +1,16 @@
+{
+  "name": "mancala-server",
+  "version": "1.0.0",
+  "description": "Mancala server",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodejs server.js"
+  },
+  "author": "Nathan Schulzke",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3"
+  }
+}
