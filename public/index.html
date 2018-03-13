@@ -1,68 +1,43 @@
 <!DOCTYPE HTML>
 
 <html lang="en">
-    <head>
-        <title>Mancala</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="css/styles.css">
-    </head>
+  <head>
+    <title>Mancala</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <body>
-        <div id="app">
-            <div class="board-container">
-                <div class="board" v-if="game !== {}">
-                    <div class="dest">
-                        <div class="pieces">{{game.holes[0]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[13]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[12]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[11]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[10]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[9]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[8]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[1]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[2]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[3]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[4]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[5]}}</div>
-                    </div>
-                    <div class="hole">
-                        <div class="pieces">{{game.holes[6]}}</div>
-                    </div>
-                    <div class="dest">
-                        <div class="pieces">{{game.holes[7]}}</div>
-                    </div>
-                </div>
+    <link rel="stylesheet" href="css/styles.min.css">
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="flex">
+        <div class="board-container">
+          <div class="board" v-if="game !== {}">
+            <div class="dest" v-bind:class="classes(0)">
+              <div class="pieces">{{game.holes[0]}}</div>
             </div>
+            <div class="hole" v-for="i in holes" v-on:click="click(i)" v-bind:class="classes(i)">
+              <div class="pieces">{{game.holes[i]}}</div>
+            </div>
+            <div class="dest" v-bind:class="classes(7)">
+              <div class="pieces">{{game.holes[7]}}</div>
+            </div>
+          </div>
         </div>
+        <div class="turn-indicator">
+          <div class="player-turn" v-bind:class="{ turn: isTurn(1) }"></div>
+          <div class="player-turn" v-bind:class="{ turn: isTurn(0) }"></div>
+        </div>
+      </div>
+    </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"
-                integrity="sha256-mpnrJ5DpEZZkwkE1ZgkEQQJW/46CSEh/STrZKOB/qoM=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.js"
-                integrity="sha256-pU9euBaEcVl8Gtg+FRYCtin2vKLN8sx5/4npZDmY2VA=" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
-    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" integrity="sha256-mpnrJ5DpEZZkwkE1ZgkEQQJW/46CSEh/STrZKOB/qoM="
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.js" integrity="sha256-pU9euBaEcVl8Gtg+FRYCtin2vKLN8sx5/4npZDmY2VA="
+      crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+  </body>
+
 </html>
