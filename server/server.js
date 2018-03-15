@@ -20,11 +20,11 @@ app.use(function(req, res, next) {
 
 let Mancala = require('./model/Mancala.js');
 let _game = new Mancala();
-let _games = [];
-let _players = [];
+let _games = {};
+let _players = {};
 
 app.post('/api/create', function(req, res) {
-  if (!_games.includes(req.body.name)) {
+  if (_games[req.body.name] === undefined) {
     res.send({
       success: true,
       url: '/api/game/' + req.body.name
@@ -39,7 +39,7 @@ app.post('/api/create', function(req, res) {
 });
 
 app.post('/api/join', function(req, res) {
-  if (_games.includes(req.body.name)) {
+  if (_games[req.body.name] !== undefined) {
     res.send({
       success: true,
       url: '/api/game/' + req.body.name
@@ -53,17 +53,19 @@ app.post('/api/join', function(req, res) {
 });
 
 app.ws('/api/game/:game', function(ws, req) {
+  let name = req.params.game;
   let game;
+  console.log(name);
 
-  if (_games[req.game] === undefined) {
-    game = _games[req.game] = new Mancala();
-    _players[req.game] = [];
-  } else {
-    game = _games[req.game];
+  if (_games[name] === undefined) {
+    _games[name] = new Mancala();
+    _players[name] = [];
   }
+  game = _games[name];
 
   console.log('New connection');
-  _players[req.game].push(ws);
+  _players[name].push(ws);
+
   ws.send(JSON.stringify({
     success: true,
     game: game
@@ -76,7 +78,7 @@ app.ws('/api/game/:game', function(ws, req) {
       if (data.action === 'move') {
         if (data.hole !== undefined) {
           let hit = game.move(data.hole);
-          _players[req.game].forEach((client) => {
+          _players[name].forEach((client) => {
             client.send(JSON.stringify({
               success: true,
               game: game,
@@ -105,7 +107,7 @@ app.ws('/api/game/:game', function(ws, req) {
 
   ws.on('close', () => {
     console.log('Connection lost');
-    _players[req.game] = _players[req.game].filter(e => e !== ws);
+    _players[name] = _players[name].filter(e => e !== ws);
   });
 });
 
