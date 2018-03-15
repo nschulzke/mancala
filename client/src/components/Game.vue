@@ -1,21 +1,27 @@
 <template>
-  <div class="flex">
-    <div class="board-container">
-      <div class="board" v-if="game !== {}">
-        <div class="dest" v-bind:class="classes(0)">
-          <div class="pieces">{{game.holes[0]}}</div>
-        </div>
-        <div class="hole" v-for="i in holes" v-on:click="click(i)" v-bind:class="classes(i)">
-          <div class="pieces">{{game.holes[i]}}</div>
-        </div>
-        <div class="dest" v-bind:class="classes(7)">
-          <div class="pieces">{{game.holes[7]}}</div>
+  <div>
+    <h1 v-if="isWon()">Player {{game.won + 1}} wins!</h1>
+    <h1 v-else>Mancala</h1>
+    <div class="flex" v-if="game !== {}">
+      <div class="board-container-outer">
+        <div class="board-container-inner">
+          <div class="board">
+            <div class="dest" v-bind:class="classes(0)">
+              <div class="pieces">{{game.holes[0]}}</div>
+            </div>
+            <div class="hole" v-for="i in holes" v-on:click="click(i)" v-bind:class="classes(i)">
+              <div class="pieces">{{game.holes[i]}}</div>
+            </div>
+            <div class="dest" v-bind:class="classes(7)">
+              <div class="pieces">{{game.holes[7]}}</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="turn-indicator">
-      <div class="player-turn" v-bind:class="{ turn: isTurn(1) }"></div>
-      <div class="player-turn" v-bind:class="{ turn: isTurn(0) }"></div>
+      <div class="turn-indicator">
+        <div class="player-turn" v-bind:class="{ turn: isTurn(1) }"></div>
+        <div class="player-turn" v-bind:class="{ turn: isTurn(0) }"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -62,6 +68,9 @@
       },
       isTurn: function (i) {
         return this.game.turn === i;
+      },
+      isWon: function () {
+        return this.game.won !== -1;
       },
       classes: function (i) {
         return {

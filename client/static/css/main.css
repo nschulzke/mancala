@@ -40,7 +40,10 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-.board-container {
+* {
+  box-sizing: border-box; }
+
+.board-container-inner {
   overflow: hidden;
   position: relative;
   margin: 1rem; }
@@ -70,6 +73,7 @@ table {
   border-radius: 50%; }
 
 .pieces {
+  font-size: 1rem;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -107,10 +111,7 @@ table {
         border-top-left-radius: 1rem;
         border-bottom-left-radius: 1rem; }
 
-  .pieces {
-    font-size: 1.5rem; }
-
-  .board-container {
+  .board-container-inner {
     height: 32rem;
     width: 8rem;
     margin: 1rem auto; }
@@ -148,11 +149,10 @@ table {
         border-bottom-left-radius: 1rem;
         border-bottom-right-radius: 1rem; }
 
-  .pieces {
-    font-size: 2rem; }
+  .board-container-outer {
+    flex: 1; }
 
-  .board-container {
-    flex: 1;
+  .board-container-inner {
     height: 0;
     padding-bottom: 25%; }
 

@@ -6,7 +6,7 @@ $highlight: mix(red, $hole, 25%);
 $turn: mix(green, $hole, 50%);
 $text: white;
 
-.board-container {
+.board-container-inner {
   overflow: hidden;
   position: relative;
   margin: 1rem;
@@ -41,6 +41,7 @@ $text: white;
 }
 
 .pieces {
+  font-size: 1rem;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -88,11 +89,7 @@ $text: white;
     }
   }
 
-  .pieces {
-    font-size: 1.5rem;
-  }
-
-  .board-container {
+  .board-container-inner {
     height: 32rem;
     width: 8rem;
     margin: 1rem auto;
@@ -144,12 +141,11 @@ $text: white;
     }
   }
 
-  .pieces {
-    font-size: 2rem;
+  .board-container-outer {
+    flex: 1;
   }
 
-  .board-container {
-    flex: 1;
+  .board-container-inner {
     height: 0;
     padding-bottom: 25%;
   }

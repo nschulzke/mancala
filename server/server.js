@@ -21,10 +21,12 @@ let Mancala = require('./model/Mancala.js');
 let _game = new Mancala();
 
 app.get('/api/game', (req, res) => {
+  console.log("GET /api/game");
   res.send(_game);
 });
 
 app.post('/api/game/move', (req, res) => {
+  console.log("POST /api/game/move");
   try {
     let hit = _game.move(req.body.hole);
     res.send({
