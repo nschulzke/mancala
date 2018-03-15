@@ -44,7 +44,7 @@ module.exports = class Mancala {
         else if (!this.isDestHole(counter))
           this.switchTurn();
         return hit;
-      } else throw new Error("That hole does not belong to the current player.");
+      } else throw new Error("Hole " + hole + " does not belong to the current player.");
     } else throw new Error("The game is over!");
   }
 
