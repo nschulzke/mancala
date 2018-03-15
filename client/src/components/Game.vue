@@ -23,7 +23,7 @@
 <script>
   import axios from 'axios';
 
-  let server = 'http://localhost:3000'
+  let server = 'http://localhost:3000';
 
   export default {
     name: 'Game',
