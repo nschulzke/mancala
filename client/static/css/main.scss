@@ -1,4 +1,5 @@
-@import "scss/reset";
+@import "partials/reset";
+
 $board: #926229;
 $hole: darken($board, 10%);
 $highlight: mix(red, $hole, 25%);
