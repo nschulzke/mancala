@@ -1,6 +1,11 @@
 @import "partials/reset";
 @import "partials/board";
 
+body {
+  color: white;
+  background-color: darken($board, 20%);
+}
+
 h1, h2 {
   text-align: center;
   margin: 0.5rem 0;
@@ -31,6 +36,9 @@ ul {
 }
 
 .chatbox {
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: $board;
   margin-top: 0.5rem;
   .chats {
     width: 100%;

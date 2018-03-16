@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="chatbox container">
-        <div class="chats">
+        <div id="chats" class="chats">
           <p v-for="chat in chats"><cite>{{chat.name}}:</cite> {{chat.chat}}</p>
         </div>
         <form>
@@ -54,6 +54,10 @@
     },
     created: function () {
       this.initWebSocket();
+    },
+    updated: function () {
+      let chats = this.$el.querySelector("#chats");
+      chats.scrollTop = chats.scrollHeight;
     },
     methods: {
       click: function (index) {
@@ -87,7 +91,7 @@
         else return false;
       },
       isClickable: function (index) {
-        return this.belongsTo(this.player, index) && this.isTurn(this.player);
+        return !this.isWon() && this.belongsTo(this.player, index) && this.isTurn(this.player);
       },
       initWebSocket: function () {
         this.socket = new WebSocket('ws://localhost:3000/api/game/' + this.gameName);

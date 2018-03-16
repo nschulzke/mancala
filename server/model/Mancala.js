@@ -52,8 +52,10 @@ module.exports = class Mancala {
   }
 
   victory(player) {
-    this.won = player;
-    this.winListener(player);
+    if (this.won === NOBODY) {
+      this.won = player;
+      this.winListener(player);
+    }
   }
 
   whoOwns(hole) {
