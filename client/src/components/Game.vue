@@ -98,7 +98,7 @@
       },
       initWebSocket: function () {
         this.token = window.sessionStorage.getItem(this.gameName);
-        let address = 'ws://localhost:3000/api/game/' + this.gameName;
+        let address = 'ws://cs260.nschulzke.com:4000/api/game/' + this.gameName;
         if (this.token !== undefined) {
           console.log(this.token);
           address += '?access_token=' + this.token;

@@ -69,7 +69,10 @@ app.ws('/api/game/:game', function(ws, req) {
         hit: [],
       }
       game.setWinListener((player) => {
-        sysChat(_containers[gameName].players[player].name + ' won the game!');
+        if (_containers[gameName].players[player] !== undefined)
+          sysChat(_containers[gameName].players[player].name + ' won the game!');
+        else sysChat('Player ' + (player + 1) + ' won the game!');
+        broadcast();
       });
     }
     let c = _containers[gameName];
@@ -100,6 +103,7 @@ app.ws('/api/game/:game', function(ws, req) {
       };
       sysChat(player.name + ' joined the game.');
     }
+    player.pingPong = setInterval(ping, 5000);
 
     broadcast();
 
@@ -127,7 +131,7 @@ app.ws('/api/game/:game', function(ws, req) {
     });
 
     ws.on('close', () => {
-      console.log('Lost connection... timing out...');
+      console.log('Connection closed, waiting for reconnect.');
       player.timingOut = true;
       let timeout = 5000;
       if (player.id <= 1) {
@@ -136,9 +140,8 @@ app.ws('/api/game/:game', function(ws, req) {
         timeout = 10000;
       }
       player.timeout = setTimeout(() => {
-        console.log('Checking if reconnected...');
         if (player.timingOut === true) {
-          console.log('Connection timed out.');
+          console.log('Connection reconnect timed out.');
           sysChat(player.name + ' left the game.');
           if (player.id === 0) {
             c.game.victory(1);
@@ -147,6 +150,9 @@ app.ws('/api/game/:game', function(ws, req) {
           }
           c.players = c.players.filter(e => e !== player);
           broadcast();
+          if (c.players.length === 0) {
+            _containers[gameName] = undefined;
+          }
         }
       }, timeout);
     });
@@ -156,6 +162,26 @@ app.ws('/api/game/:game', function(ws, req) {
         success: false,
         error: message
       }))
+    }
+
+    ws.on('pong', () => {
+      clearTimeout(player.ping);
+    });
+
+    function ping() {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.ping();
+        player.ping = setTimeout(() => {
+          lostConnection();
+        }, 5000);
+      } else lostConnection();
+    }
+
+    function lostConnection() {
+      clearInterval(player.pingPong);
+      clearTimeout(player.ping);
+      if (player.socket._socket)
+        player.socket._socket.destroy();
     }
 
     function broadcast() {
@@ -188,4 +214,4 @@ app.ws('/api/game/:game', function(ws, req) {
   }
 });
 
-app.listen(3000, () => console.log('Server listening on port 3000!'))
+app.listen(4000, () => console.log('Server listening on port 4000!'))

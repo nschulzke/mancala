@@ -55,7 +55,7 @@
 <script>
   import axios from 'axios';
 
-  let server = 'http://localhost:3000/api';
+  let server = 'http://cs260.nschulzke.com:4000/api';
 
   export default {
     name: 'Lobby',
