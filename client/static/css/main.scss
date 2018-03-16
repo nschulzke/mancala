@@ -157,3 +157,12 @@ button {
 li:not(:last-child) {
   margin-bottom: 0.5em;
 }
+
+.footer {
+  text-align: center;
+  margin-top: 1rem;
+  a {
+    color: white;
+    text-decoration: underline;
+  }
+}

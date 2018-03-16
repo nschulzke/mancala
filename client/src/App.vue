@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <router-view/>
+    <div class="footer"><a href="https://github.com/nschulzke/mancala">Repository</a></div>
   </div>
 </template>
 
