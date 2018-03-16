@@ -57,12 +57,13 @@ table {
   background: url("/static/img/board.jpeg");
   border-radius: 2rem;
   display: grid;
+  grid-gap: 8% 2%;
+  padding: 0.5rem;
   box-shadow: 10px 10px rgba(0, 0, 0, 0.75); }
 
 .dest,
 .hole {
   background-color: rgba(66, 45, 19, 0.95);
-  margin: 1rem;
   padding: 1rem;
   position: relative; }
   .dest .pieces,
