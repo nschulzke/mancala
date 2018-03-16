@@ -57,6 +57,7 @@ app.ws('/api/game/:game', function(ws, req) {
     _containers[name] = {
       game: new Mancala(),
       players: [],
+      playerNames: [],
       chats: [],
       hit: [],
     }
@@ -64,10 +65,16 @@ app.ws('/api/game/:game', function(ws, req) {
   let c = _containers[name];
   c.players.push(ws);
   let player = c.players.indexOf(ws);
+  let playerName;
+  if (player <= 1)
+    playerName = 'Player ' + (player + 1);
+  else
+    playerName = 'Observer ' + (player - 1);
+  c.playerNames.push(playerName);
 
-  ws.send(gameJSON());
+  sysChat(playerName + ' joined the game.');
 
-  console.log('Sent game');
+  broadcast();
 
   ws.on('message', (msg) => {
     console.log('Message received');
@@ -79,7 +86,10 @@ app.ws('/api/game/:game', function(ws, req) {
           broadcast();
         } else error('No hole specified to move!');
       } else if (data.action === 'chat') {
-        c.chats.push({name: 'Anon' + player, chat: data.chat});
+        c.chats.push({
+          name: playerName,
+          chat: data.chat
+        });
         broadcast();
       } else if (data.action === 'get') {
         ws.send(gameJSON());
@@ -90,13 +100,14 @@ app.ws('/api/game/:game', function(ws, req) {
   });
 
   ws.on('close', () => {
-    if (player === 0)
+    if (player === 0) {
       c.game.won = 1;
-    else if (player === 1)
+    } else if (player === 1) {
       c.game.won = 0;
+    }
+    sysChat(playerName + ' left the game.');
     c.players = c.players.filter(e => e !== ws);
-    if (c.game.won !== -1)
-      broadcast();
+    broadcast();
   });
 
   function error(message) {
@@ -107,18 +118,28 @@ app.ws('/api/game/:game', function(ws, req) {
   }
 
   function broadcast() {
-    console.log('broadcast');
-    c.players.forEach((client) => {
-      client.send(gameJSON())
+    if (c.game.won !== -1) {
+      sysChat(c.playerNames[c.game.won] + ' won the game!');
+    }
+    c.players.forEach((client, index) => {
+      client.send(gameJSON(index))
     });
   }
 
-  function gameJSON() {
+  function sysChat(message) {
+    c.chats.push({
+      name: 'System',
+      chat: message
+    });
+  }
+
+  function gameJSON(p) {
+    if (p === undefined) p = player;
     return JSON.stringify({
       success: true,
       game: c.game,
       chats: c.chats,
-      player: player,
+      player: p,
       hit: c.hit,
     });
   }
