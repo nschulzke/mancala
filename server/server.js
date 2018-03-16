@@ -85,7 +85,9 @@ app.ws('/api/game/:game', function(ws, req) {
       if (matched.length > 0) {
         player = matched[0];
         player.timingOut = false;
+        clearTimeout(player.timeout);
         player.socket = ws;
+        console.log('Connection resumed.');
         sysChat(player.name + ' reconnected!');
       }
     }
@@ -125,15 +127,18 @@ app.ws('/api/game/:game', function(ws, req) {
     });
 
     ws.on('close', () => {
+      console.log('Lost connection... timing out...');
       player.timingOut = true;
-      sysChat(player.name + ' lost connection. Waiting...');
-      broadcast();
-      setTimeout(() => {
-        sysChat(player.name + ' will forfeit in 5 seconds...')
+      let timeout = 5000;
+      if (player.id <= 1) {
+        sysChat(player.name + ' lost connection. Waiting...');
         broadcast();
-      }, 5000);
-      setTimeout(() => {
+        timeout = 10000;
+      }
+      player.timeout = setTimeout(() => {
+        console.log('Checking if reconnected...');
         if (player.timingOut === true) {
+          console.log('Connection timed out.');
           sysChat(player.name + ' left the game.');
           if (player.id === 0) {
             c.game.victory(1);
@@ -143,7 +148,7 @@ app.ws('/api/game/:game', function(ws, req) {
           c.players = c.players.filter(e => e !== player);
           broadcast();
         }
-      }, 10000);
+      }, timeout);
     });
 
     function error(message) {

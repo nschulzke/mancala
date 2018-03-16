@@ -1,7 +1,9 @@
 <template>
   <div>
-    <h1 v-if="game.holes !== undefined">{{gameName}}</h1>
-    <h1 v-else>Loading game...</h1>
+    <div class="block-container h1">
+      <h1 v-if="game.holes !== undefined">{{gameName}}</h1>
+      <h1 v-else>Loading game...</h1>
+    </div>
     <div v-if="game.holes !== undefined">
       <div class="flex">
         <div class="board-container-outer">
@@ -121,13 +123,3 @@
     },
   }
 </script>
-
-<style scoped>
-  form {
-    margin-top: 1rem;
-  }
-
-  form div {
-    margin-top: 0.5rem;
-  }
-</style>

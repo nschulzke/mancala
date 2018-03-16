@@ -44,7 +44,6 @@ table {
   box-sizing: border-box; }
 
 .board-container-inner {
-  overflow: hidden;
   position: relative;
   margin: 1rem; }
 
@@ -55,13 +54,14 @@ table {
   width: 100%;
   height: 100%;
   text-align: center;
-  background-color: #926229;
+  background: url("/static/img/board.jpeg");
   border-radius: 2rem;
-  display: grid; }
+  display: grid;
+  box-shadow: 10px 10px rgba(0, 0, 0, 0.75); }
 
 .dest,
 .hole {
-  background-color: #6a471e;
+  background-color: rgba(66, 45, 19, 0.95);
   margin: 1rem;
   padding: 1rem;
   position: relative; }
@@ -74,7 +74,7 @@ table {
     border-radius: 50%; }
   .dest.clickable,
   .hole.clickable {
-    background-color: #505517;
+    background-color: rgba(48, 67, 14, 0.9625);
     cursor: pointer; }
     .dest.clickable .pieces,
     .hole.clickable .pieces {
@@ -98,14 +98,15 @@ table {
   border-radius: 8rem; }
 
 .turn-indicator {
-  background-color: #926229;
+  background: url("/static/img/board.jpeg");
   padding: 1rem;
   border-radius: 1rem;
-  display: grid; }
+  display: grid;
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.75); }
   .turn-indicator .player-turn {
-    background-color: #6a471e; }
+    background-color: rgba(66, 45, 19, 0.95); }
     .turn-indicator .player-turn.turn {
-      background-color: #35640f; }
+      background-color: rgba(31, 89, 9, 0.975); }
 
 @media screen and (max-width: 600px) {
   .turn-indicator {
@@ -189,17 +190,44 @@ table {
       grid-column: 8; } }
 body {
   color: white;
-  background-color: #422d13; }
+  background: url("/static/img/background.jpeg"); }
 
 h1, h2 {
   text-align: center;
-  margin: 0.5rem 0; }
+  margin: 0 auto;
+  margin-bottom: 0.5rem; }
 
 h1 {
   font-size: 2rem; }
 
+.block-container {
+  width: 30rem;
+  margin: 0 auto;
+  padding: 0.5rem;
+  background: url("/static/img/board.jpeg");
+  box-shadow: 10px 10px rgba(0, 0, 0, 0.75);
+  border-radius: 1rem; }
+  .block-container.h1 {
+    text-align: center; }
+    .block-container.h1 h1 {
+      background: url("/static/img/paper.jpeg");
+      color: black;
+      padding: 0.5rem;
+      border-radius: 0.25rem;
+      display: inline-block; }
+  .block-container .paper {
+    width: 100%;
+    height: 100%;
+    background: url("/static/img/paper.jpeg");
+    color: black;
+    padding: 1rem;
+    border-radius: 1rem; }
+
 h2 {
   font-size: 1.5rem; }
+
+p, li {
+  line-height: 1.2em; }
 
 p, ul {
   font-size: 1rem;
@@ -213,18 +241,28 @@ ul {
   padding: 0 1rem;
   max-width: 50rem;
   margin: 0 auto; }
+  .container.light {
+    background-color: white;
+    border: 1px solid black;
+    color: black; }
+  .container.lobby {
+    max-width: 40rem; }
 
 .chatbox {
   padding: 1rem;
   border-radius: 1rem;
-  background-color: #926229;
-  margin-top: 0.5rem; }
+  background: url("/static/img/board.jpeg");
+  margin-top: 0.5rem;
+  box-shadow: 10px 10px rgba(0, 0, 0, 0.75); }
   .chatbox .chats {
     width: 100%;
     height: 10rem;
     overflow: auto;
     border: 1px solid black;
-    padding: 0.5rem; }
+    padding: 0.5rem;
+    color: black;
+    border-radius: 0.25rem;
+    background: url("/static/img/paper.jpeg"); }
   .chatbox p {
     line-height: 1.2em;
     margin-bottom: 0.5em; }
@@ -232,9 +270,50 @@ ul {
       font-weight: bold; }
   .chatbox form {
     width: 100%;
-    display: flex; }
+    display: flex;
+    margin-top: 0.5rem; }
     .chatbox form input {
       flex: 1;
       margin-right: 0.5rem; }
+
+input {
+  background: url("/static/img/paper.jpeg");
+  border: 1px solid black;
+  color: black;
+  font-size: 1rem;
+  line-height: 1.2em;
+  padding: 0.25rem;
+  border-radius: 0.25rem; }
+
+.gameForm {
+  text-align: center; }
+  .gameForm .gameName {
+    text-align: left;
+    display: inline-block; }
+    .gameForm .gameName * {
+      display: block; }
+    .gameForm .gameName input {
+      margin-top: 0.5rem; }
+
+button {
+  background-color: rgba(117, 33, 14, 0.9625);
+  border: 1px solid black;
+  color: white;
+  font-size: 1rem;
+  line-height: 1.2rem; }
+
+.buttons {
+  text-align: center;
+  margin-top: 1rem; }
+
+.section {
+  padding-top: 1rem; }
+
+.section:not(:last-child) {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid black; }
+
+li:not(:last-child) {
+  margin-bottom: 0.5em; }
 
 /*# sourceMappingURL=main.css.map */
