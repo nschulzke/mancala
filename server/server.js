@@ -30,7 +30,6 @@ app.post('/api/create', function(req, res) {
       url: '/api/game/' + req.body.name
     });
   } else {
-    console.log('created!');
     res.send({
       success: false,
       error: 'A game with the name ' + req.body.name + ' already exists!'
@@ -53,23 +52,19 @@ app.post('/api/join', function(req, res) {
 });
 
 app.ws('/api/game/:game', function(ws, req) {
-  let name = req.params.game;
-  let game;
-  console.log(name);
+  console.log('New connection');
 
+  let name = req.params.game;
   if (_games[name] === undefined) {
     _games[name] = new Mancala();
     _players[name] = [];
   }
-  game = _games[name];
-
-  console.log('New connection');
+  let game = _games[name];
   _players[name].push(ws);
 
-  ws.send(JSON.stringify({
-    success: true,
-    game: game
-  }));
+  ws.send(gameJSON());
+
+  console.log('Sent game');
 
   ws.on('message', (msg) => {
     console.log('Message received');
@@ -77,38 +72,49 @@ app.ws('/api/game/:game', function(ws, req) {
       let data = JSON.parse(msg);
       if (data.action === 'move') {
         if (data.hole !== undefined) {
-          let hit = game.move(data.hole);
-          _players[name].forEach((client) => {
-            client.send(JSON.stringify({
-              success: true,
-              game: game,
-              hit: hit,
-            }));
-          });
-        } else {
-          ws.send(JSON.stringify({
-            success: false,
-            error: 'No hole specified to move!'
-          }));
-        }
+          let hit = game.move(data.hole, _players[name].indexOf(ws));
+          broadcast(hit);
+        } else error('No hole specified to move!');
       } else if (data.action === 'get') {
-        ws.send(JSON.stringify({
-          success: true,
-          game: game
-        }));
+        ws.send(gameJSON());
       }
     } catch (e) {
-      ws.send(JSON.stringify({
-        success: false,
-        error: e.message
-      }));
-    }
+      error(e.message)
+    };
   });
 
   ws.on('close', () => {
-    console.log('Connection lost');
+    if (_players[name].indexOf(ws) === 0)
+      _games[name].won = 1;
+    else if (_players[name].indexOf(ws) === 1)
+      _games[name].won = 0;
     _players[name] = _players[name].filter(e => e !== ws);
+    if (_games[name].won !== -1)
+      broadcast();
   });
+
+  function error(message) {
+    ws.send(JSON.stringify({
+      success: false,
+      error: message
+    }))
+  }
+
+  function broadcast(hit) {
+    console.log('broadcast');
+    _players[name].forEach((client) => {
+      client.send(gameJSON(hit))
+    });
+  }
+
+  function gameJSON(hit) {
+    return JSON.stringify({
+      success: true,
+      game: game,
+      player: _players[name].indexOf(ws),
+      hit: hit
+    });
+  }
 });
 
 app.listen(3000, () => console.log('Server listening on port 3000!'))

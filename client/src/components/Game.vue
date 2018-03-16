@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1 v-if="isWon()">Player {{game.won + 1}} wins!</h1>
-    <h1 v-else-if="game.holes !== undefined">{{gameName}}</h1>
+    <h1 v-if="game.holes !== undefined">{{gameName}}</h1>
+    <h2 v-if="isWon()">Player {{game.won + 1}} wins!</h2>
     <div class="flex" v-if="game.holes !== undefined">
       <div class="board-container-outer">
         <div class="board-container-inner">
@@ -24,6 +24,7 @@
       </div>
     </div>
     <div class="container" v-else>
+      <h1>Mancala</h1>
       <p>If you're creating a new game, pick a game name and press Create. If you're joining
         a friend's game, enter the name they gave you for the game.</p>
       <form>
@@ -52,37 +53,55 @@
         holes: [13, 12, 11, 10, 9, 8, 1, 2, 3, 4, 5, 6],
         socket: {},
         gameName: '',
+        player: -1,
       }
     },
     methods: {
-      click: function (i) {
-        this.hit = [];
-        this.socket.send(JSON.stringify({action: 'move', hole: i}));
+      click: function (index) {
+        if (this.isClickable(index)) {
+          this.hit = [];
+          this.socket.send(JSON.stringify({action: 'move', hole: index}));
+        }
       },
-      isTurn: function (i) {
-        return this.game.turn === i;
+      isTurn: function (player) {
+        return this.game.turn === player;
       },
       isWon: function () {
         return this.game.won !== undefined && this.game.won !== -1;
       },
-      classes: function (i) {
+      classes: function (index) {
         return {
-          hit: this.hit.includes(i),
-          player1: i > 0 && i < 7,
-          player2: i > 7 && i < 14,
+          hit: this.hit.includes(index),
+          player1: this.belongsTo(0, index),
+          player2: this.belongsTo(1, index),
+          clickable: this.isClickable(index),
         }
+      },
+      belongsTo: function(player, index) {
+        if (player === 0)
+          return index > 0 && index < 7;
+        else if (player === 1)
+          return index > 7 && index < 14;
+        else return false;
+      },
+      isClickable: function(index) {
+        return this.belongsTo(this.player, index) && this.isTurn(this.player);
       },
       initWebSocket: function () {
         this.socket = new WebSocket('ws://localhost:3000/api/game/' + this.gameName);
 
         this.socket.addEventListener('message', (event) => {
-          console.log('data');
+          console.log(event);
           let data = JSON.parse(event.data);
           if (data.success === true) {
             this.game = data.game;
             if (data.hit !== undefined) {
               this.hit = data.hit;
             }
+            console.log(data.player);
+            if (data.player <= 1) {
+              this.player = data.player;
+            } else this.player = false;
           }
           else alert(data.error);
         });

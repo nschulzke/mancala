@@ -65,15 +65,29 @@ table {
   margin: 1rem;
   padding: 1rem;
   position: relative; }
-  .dest.hit,
-  .hole.hit {
-    background-color: #8f3517; }
+  .dest .pieces,
+  .hole .pieces {
+    cursor: default; }
+  .dest.hit .pieces,
+  .hole.hit .pieces {
+    border: 1px solid white;
+    border-radius: 50%; }
+  .dest.clickable,
+  .hole.clickable {
+    background-color: #505517;
+    cursor: pointer; }
+    .dest.clickable .pieces,
+    .hole.clickable .pieces {
+      cursor: pointer; }
 
 .hole {
   border-radius: 50%; }
 
 .pieces {
   font-size: 1rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  line-height: 1.2rem;
   position: absolute;
   top: 50%;
   left: 50%;

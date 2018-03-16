@@ -26,25 +26,27 @@ module.exports = class Mancala {
     this.won = NOBODY;
   }
 
-  move(hole) {
+  move(hole, player) {
     if (this.won === NOBODY) {
-      if (this.belongsTo(hole, this.turn)) {
-        let hit = [];
-        let stones = this.holes[hole];
-        let counter = hole;
-        this.holes[hole] = 0;
-        while (stones > 0) {
-          counter = next(counter);
-          hit.push(counter);
-          this.holes[counter]++;
-          stones--;
-        }
-        if (this.isEmpty(this.turn))
-          this.won = this.turn;
-        else if (!this.isDestHole(counter))
-          this.switchTurn();
-        return hit;
-      } else throw new Error("Hole " + hole + " does not belong to the current player.");
+      if (this.turn === player) {
+        if (this.belongsTo(hole, this.turn)) {
+          let hit = [];
+          let stones = this.holes[hole];
+          let counter = hole;
+          this.holes[hole] = 0;
+          while (stones > 0) {
+            counter = next(counter);
+            hit.push(counter);
+            this.holes[counter]++;
+            stones--;
+          }
+          if (this.isEmpty(this.turn))
+            this.won = this.turn;
+          else if (!this.isDestHole(counter))
+            this.switchTurn();
+          return hit;
+        } else throw new Error("That hole does not belong to you!");
+      } else throw new Error("It's not your turn!");
     } else throw new Error("The game is over!");
   }
 

@@ -1,6 +1,7 @@
 $board: #926229;
 $hole: darken($board, 10%);
 $highlight: mix(red, $hole, 25%);
+$clickable: mix(green, $hole, 25%);
 $turn: mix(green, $hole, 50%);
 $text: white;
 
@@ -28,9 +29,22 @@ $text: white;
   margin: 1rem;
   padding: 1rem;
   position: relative;
+  .pieces {
+    cursor: default;
+  }
 
   &.hit {
-    background-color: $highlight;
+    .pieces {
+      border: 1px solid $text;
+      border-radius: 50%;
+    }
+  }
+  &.clickable {
+    background-color: $clickable;
+    cursor: pointer;
+    .pieces {
+      cursor: pointer;
+    }
   }
 }
 
@@ -40,6 +54,9 @@ $text: white;
 
 .pieces {
   font-size: 1rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  line-height: 1.2rem;
   position: absolute;
   top: 50%;
   left: 50%;
