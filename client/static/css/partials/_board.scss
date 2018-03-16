@@ -85,7 +85,7 @@ $shadow: rgba(#000, 0.75);
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 480px) {
   .turn-indicator {
     width: 9rem;
     margin: 0 auto;
@@ -139,7 +139,7 @@ $shadow: rgba(#000, 0.75);
   }
 }
 
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 480px) {
   .flex {
     display: flex;
   }

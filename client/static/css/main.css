@@ -108,7 +108,7 @@ table {
     .turn-indicator .player-turn.turn {
       background-color: rgba(31, 89, 9, 0.975); }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 480px) {
   .turn-indicator {
     width: 9rem;
     margin: 0 auto;
@@ -148,7 +148,7 @@ table {
       grid-row: 1; }
     .dest:last-child {
       grid-row: 8; } }
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 480px) {
   .flex {
     display: flex; }
 
@@ -201,7 +201,7 @@ h1 {
   font-size: 2rem; }
 
 .block-container {
-  width: 30rem;
+  max-width: 30rem;
   margin: 0 auto;
   padding: 0.5rem;
   background: url("/static/img/board.jpeg");
