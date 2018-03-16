@@ -24,6 +24,7 @@ module.exports = class Mancala {
     this.holes[P2_DEST] = 0;
     this.turn = P1;
     this.won = NOBODY;
+    this.winListener = () => {};
   }
 
   move(hole, player) {
@@ -41,13 +42,18 @@ module.exports = class Mancala {
             stones--;
           }
           if (this.isEmpty(this.turn))
-            this.won = this.turn;
+            this.victory(this.turn);
           else if (!this.isDestHole(counter))
             this.switchTurn();
           return hit;
         } else throw new Error("That hole does not belong to you!");
       } else throw new Error("It's not your turn!");
     } else throw new Error("The game is over!");
+  }
+
+  victory(player) {
+    this.won = player;
+    this.winListener(player);
   }
 
   whoOwns(hole) {
@@ -77,5 +83,9 @@ module.exports = class Mancala {
       hole = next(hole);
     }
     return true;
+  }
+
+  setWinListener(listener) {
+    this.winListener = listener;
   }
 }

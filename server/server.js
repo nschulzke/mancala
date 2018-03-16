@@ -54,8 +54,12 @@ app.ws('/api/game/:game', function(ws, req) {
 
   let name = req.params.game;
   if (_containers[name] === undefined) {
+    let game = new Mancala();
+    game.setWinListener((player) => {
+      sysChat(_containers[name].playerNames[player] + ' won the game!');
+    });
     _containers[name] = {
-      game: new Mancala(),
+      game: game,
       players: [],
       playerNames: [],
       chats: [],
@@ -101,9 +105,9 @@ app.ws('/api/game/:game', function(ws, req) {
 
   ws.on('close', () => {
     if (player === 0) {
-      c.game.won = 1;
+      c.game.victory(1);
     } else if (player === 1) {
-      c.game.won = 0;
+      c.game.victory(0);
     }
     sysChat(playerName + ' left the game.');
     c.players = c.players.filter(e => e !== ws);
@@ -118,9 +122,6 @@ app.ws('/api/game/:game', function(ws, req) {
   }
 
   function broadcast() {
-    if (c.game.won !== -1) {
-      sysChat(c.playerNames[c.game.won] + ' won the game!');
-    }
     c.players.forEach((client, index) => {
       client.send(gameJSON(index))
     });
