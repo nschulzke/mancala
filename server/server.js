@@ -19,12 +19,10 @@ app.use(function(req, res, next) {
 });
 
 let Mancala = require('./model/Mancala.js');
-let _game = new Mancala();
-let _games = {};
-let _players = {};
+let _containers = {};
 
 app.post('/api/create', function(req, res) {
-  if (_games[req.body.name] === undefined) {
+  if (_containers[req.body.name] === undefined) {
     res.send({
       success: true,
       url: '/api/game/' + req.body.name
@@ -38,7 +36,7 @@ app.post('/api/create', function(req, res) {
 });
 
 app.post('/api/join', function(req, res) {
-  if (_games[req.body.name] !== undefined) {
+  if (_containers[req.body.name] !== undefined) {
     res.send({
       success: true,
       url: '/api/game/' + req.body.name
@@ -55,12 +53,17 @@ app.ws('/api/game/:game', function(ws, req) {
   console.log('New connection');
 
   let name = req.params.game;
-  if (_games[name] === undefined) {
-    _games[name] = new Mancala();
-    _players[name] = [];
+  if (_containers[name] === undefined) {
+    _containers[name] = {
+      game: new Mancala(),
+      players: [],
+      chats: [],
+      hit: [],
+    }
   }
-  let game = _games[name];
-  _players[name].push(ws);
+  let c = _containers[name];
+  c.players.push(ws);
+  let player = c.players.indexOf(ws);
 
   ws.send(gameJSON());
 
@@ -72,9 +75,12 @@ app.ws('/api/game/:game', function(ws, req) {
       let data = JSON.parse(msg);
       if (data.action === 'move') {
         if (data.hole !== undefined) {
-          let hit = game.move(data.hole, _players[name].indexOf(ws));
-          broadcast(hit);
+          c.hit = c.game.move(data.hole, player);
+          broadcast();
         } else error('No hole specified to move!');
+      } else if (data.action === 'chat') {
+        c.chats.push({name: 'Anon' + player, chat: data.chat});
+        broadcast();
       } else if (data.action === 'get') {
         ws.send(gameJSON());
       }
@@ -84,12 +90,12 @@ app.ws('/api/game/:game', function(ws, req) {
   });
 
   ws.on('close', () => {
-    if (_players[name].indexOf(ws) === 0)
-      _games[name].won = 1;
-    else if (_players[name].indexOf(ws) === 1)
-      _games[name].won = 0;
-    _players[name] = _players[name].filter(e => e !== ws);
-    if (_games[name].won !== -1)
+    if (player === 0)
+      c.game.won = 1;
+    else if (player === 1)
+      c.game.won = 0;
+    c.players = c.players.filter(e => e !== ws);
+    if (c.game.won !== -1)
       broadcast();
   });
 
@@ -100,19 +106,20 @@ app.ws('/api/game/:game', function(ws, req) {
     }))
   }
 
-  function broadcast(hit) {
+  function broadcast() {
     console.log('broadcast');
-    _players[name].forEach((client) => {
-      client.send(gameJSON(hit))
+    c.players.forEach((client) => {
+      client.send(gameJSON())
     });
   }
 
-  function gameJSON(hit) {
+  function gameJSON() {
     return JSON.stringify({
       success: true,
-      game: game,
-      player: _players[name].indexOf(ws),
-      hit: hit
+      game: c.game,
+      chats: c.chats,
+      player: player,
+      hit: c.hit,
     });
   }
 });

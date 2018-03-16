@@ -2,25 +2,36 @@
   <div>
     <h1 v-if="game.holes !== undefined">{{gameName}}</h1>
     <h2 v-if="isWon()">Player {{game.won + 1}} wins!</h2>
-    <div class="flex" v-if="game.holes !== undefined">
-      <div class="board-container-outer">
-        <div class="board-container-inner">
-          <div class="board">
-            <div class="dest" v-bind:class="classes(0)">
-              <div class="pieces">{{game.holes[0]}}</div>
-            </div>
-            <div class="hole" v-for="i in holes" v-on:click="click(i)" v-bind:class="classes(i)">
-              <div class="pieces">{{game.holes[i]}}</div>
-            </div>
-            <div class="dest" v-bind:class="classes(7)">
-              <div class="pieces">{{game.holes[7]}}</div>
+    <div v-if="game.holes !== undefined">
+      <div class="flex">
+        <div class="board-container-outer">
+          <div class="board-container-inner">
+            <div class="board">
+              <div class="dest" v-bind:class="classes(0)">
+                <div class="pieces">{{game.holes[0]}}</div>
+              </div>
+              <div class="hole" v-for="i in holes" v-on:click="click(i)" v-bind:class="classes(i)">
+                <div class="pieces">{{game.holes[i]}}</div>
+              </div>
+              <div class="dest" v-bind:class="classes(7)">
+                <div class="pieces">{{game.holes[7]}}</div>
+              </div>
             </div>
           </div>
         </div>
+        <div class="turn-indicator">
+          <div class="player-turn" v-bind:class="{ turn: isTurn(1) }"></div>
+          <div class="player-turn" v-bind:class="{ turn: isTurn(0) }"></div>
+        </div>
       </div>
-      <div class="turn-indicator">
-        <div class="player-turn" v-bind:class="{ turn: isTurn(1) }"></div>
-        <div class="player-turn" v-bind:class="{ turn: isTurn(0) }"></div>
+      <div class="chatbox container">
+        <div class="chats">
+          <p v-for="chat in chats"><cite>{{chat.name}}: {{chat.chat}}</cite></p>
+        </div>
+        <form>
+          <input v-model="chatDraft">
+          <button v-on:click="sendChat()">Send</button>
+        </form>
       </div>
     </div>
     <div class="container" v-else>
@@ -54,6 +65,8 @@
         socket: {},
         gameName: '',
         player: -1,
+        chats: [],
+        chatDraft: '',
       }
     },
     methods: {
@@ -62,6 +75,10 @@
           this.hit = [];
           this.socket.send(JSON.stringify({action: 'move', hole: index}));
         }
+      },
+      sendChat: function () {
+        this.socket.send(JSON.stringify({action: 'chat', chat: this.chatDraft}));
+        this.chatDraft = '';
       },
       isTurn: function (player) {
         return this.game.turn === player;
@@ -77,31 +94,30 @@
           clickable: this.isClickable(index),
         }
       },
-      belongsTo: function(player, index) {
+      belongsTo: function (player, index) {
         if (player === 0)
           return index > 0 && index < 7;
         else if (player === 1)
           return index > 7 && index < 14;
         else return false;
       },
-      isClickable: function(index) {
+      isClickable: function (index) {
         return this.belongsTo(this.player, index) && this.isTurn(this.player);
       },
       initWebSocket: function () {
         this.socket = new WebSocket('ws://localhost:3000/api/game/' + this.gameName);
 
         this.socket.addEventListener('message', (event) => {
-          console.log(event);
           let data = JSON.parse(event.data);
           if (data.success === true) {
             this.game = data.game;
             if (data.hit !== undefined) {
               this.hit = data.hit;
             }
-            console.log(data.player);
             if (data.player <= 1) {
               this.player = data.player;
             } else this.player = false;
+            this.chats = data.chats;
           }
           else alert(data.error);
         });
@@ -133,9 +149,11 @@
   h1 {
     margin: 0;
   }
+
   form {
     margin-top: 1rem;
   }
+
   form div {
     margin-top: 0.5rem;
   }
