@@ -50,6 +50,7 @@
         player: -1,
         chats: [],
         chatDraft: '',
+        token: '',
       }
     },
     created: function () {
@@ -94,7 +95,13 @@
         return !this.isWon() && this.belongsTo(this.player, index) && this.isTurn(this.player);
       },
       initWebSocket: function () {
-        this.socket = new WebSocket('ws://localhost:3000/api/game/' + this.gameName);
+        this.token = window.sessionStorage.getItem(this.gameName);
+        let address = 'ws://localhost:3000/api/game/' + this.gameName;
+        if (this.token !== undefined) {
+          console.log(this.token);
+          address += '?access_token=' + this.token;
+        }
+        this.socket = new WebSocket(address);
 
         this.socket.addEventListener('message', (event) => {
           let data = JSON.parse(event.data);
@@ -105,6 +112,8 @@
             } else this.player = false;
             this.hit = data.hit;
             this.chats = data.chats;
+            this.token = data.token;
+            window.sessionStorage.setItem(this.gameName, this.token);
           }
           else alert(data.error);
         });
